@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# https://github.com/olbrich/ruby-units/blob/master/lib/ruby_units/unit.rb
 
 require 'physics'
 require 'ruby-units'
@@ -31,11 +32,25 @@ class Blackhole
   def 𝜏 ; tau end
   # FIXME add superscripts ² 
 
-  def mass= n ; @mass = Unit.new "#{n} kg" end
+  def mass_scale= n ; @mass_scale = n ; @mass = mass.convert_to(mass_scale) end
+  def mass_scale ; @mass_scale end
+  def mass= mas
+    p [:m1=, mas]
+    mas = Unit.new mas if mas.is_a? String
+    if mas.is_a? Unit
+      mass_scale = mas.units
+    else
+      mas = Unit.new "#{mas} #{mass_scale}"
+    end
+    p [:m2=, mas]
+    @mass = mas
+  end
+  alias setmass mass=
   def mass ; @mass end
 
-  def radius= n ; end # FIXME
-  def radius ; mass * 2 * g / c**2 end
+  attr_accessor :radius_scale
+  def radius= rad ; setmass(rad / (2 * g) * c**2) ; radius_scale = rad.units end # FIXME
+  def radius ; p [:r, :m, @mass] ; (mass * 2 * g / c**2).convert_to(radius_scale) end
 
   def area= n ; end # FIXME
   def area ; 4 * pi * radius**2 end
@@ -50,7 +65,8 @@ class Blackhole
   def luminosity ; ((1 / mass**2) * ((hbar * c**6) / (15360 * pi * g**2))) end
 
   def lifetime= n ; end # FIXME
-  def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))) / '1 kg*m^2/W*s^3' end # FIXME Units all wrong
+  def lifetime_unitcorrection ; 1 end # '1 kg*m^2/W*s^3' end
+  def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))) / lifetime_unitcorrection end # FIXME Units all wrong without compensation
 
   def total_energy= n ; end # FIXME
   def total_energy ; (mass * c**2).convert_to 'J' end
@@ -65,6 +81,8 @@ class Blackhole
 
   def initialize mass # kg
     self.mass= mass
+    @radius_scale = 'm'
+    @mass_scale = 'kg'
   end
 end
 
