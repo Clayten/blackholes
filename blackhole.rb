@@ -29,23 +29,30 @@ class Blackhole
   def ℏ ; hbar end
   def 𝜋 ; pi end
   def 𝜏 ; tau end
-  # ² 
+  # FIXME add superscripts ² 
 
-  def radius= n ; end # FIXME Implement
+  def mass= n ; @mass = Unit.new "#{n} kg" end
+  def mass ; @mass end
+
+  def radius= n ; end # FIXME
   def radius ; mass * 2 * g / c**2 end
 
+  def area= n ; end # FIXME
   def area ; 4 * pi * radius**2 end
 
-  def gravity ; (1 / mass) * (c**4 / (4 * g)) end
+  def gravity= n ; end # FIXME
+  def gravity ; 1 / mass * c**4 / (4 * g) end
 
-  def entrop_ ; (mass**2 * ((4 * pi * g) / (hbar * c / Math.log(10)))) end
+  def entropy= n ; end # FIXME
   def entropy ; (mass**2 * ((4 * pi * g) / (hbar * c / Math.log(10)))) / '1 kg*m^2/W*s^3' end # FIXME Wrong number and units
 
+  def luminosity= n ; end # FIXME
   def luminosity ; ((1 / mass**2) * ((hbar * c**6) / (15360 * pi * g**2))) end
 
-  def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))) end
+  def lifetime= n ; end # FIXME
   def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))) / '1 kg*m^2/W*s^3' end # FIXME Units all wrong
 
+  def total_energy= n ; end # FIXME
   def total_energy ; (mass * c**2).convert_to 'J' end
 
   def to_s ; "(mass: #{mass} radius: #{radius} area: #{area} gravity: #{gravity} entropy: #{entropy} luminosity: #{luminosity} lifetime: #{lifetime})" end
@@ -55,9 +62,6 @@ class Blackhole
   def age_by n # days
     # returns energy released, decrements mass
   end
-
-  def mass ; @mass end
-  def mass= n ; @mass = Unit.new "#{n} kg" end
 
   def initialize mass # kg
     self.mass= mass
