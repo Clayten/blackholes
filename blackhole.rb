@@ -37,61 +37,97 @@ class Blackhole
   def 𝜏 ; tau end
   # FIXME add superscripts ² 
 
-  def mass_scale= n ; @mass_scale = n ; @mass = mass.convert_to(mass_scale) end
-  def mass_scale ; @mass_scale end
+  attr_reader :mass_scale
+  def set_mass_scale u
+    raise ArgumentError, "Improper argument - not mass. #{u}" unless U(u).kind == :mass
+    @mass_scale = u
+    @mass = mass.convert_to(mass_scale) if mass
+  end
   def mass= mas
     mas = U(mas) if mas.is_a? String
     if mas.is_a? Unit
-      mass_scale = mas.units
+      set_mass_scale mas.units # Only set the units if they were provided
     else
-      mas = U("#{mas} #{mass_scale}")
+      mas = U("#{mas} #{mass_scale}") # Raw numbers are treated as units of the default scale
     end
-    raise ArgumentError, "Improper argument - not mass. #{mas}" unless mas.kind == :mass
     p [:m=, mas]
     @mass = mas.convert_to(mas.base)
   end
   alias setmass mass=
   def mass ; @mass end
 
-  attr_accessor :radius_scale
+  attr_reader :radius_scale
+  def set_radius_scale u
+    raise ArgumentError, "Improper argument - not length. #{u}" unless U(u).kind == :length
+    @radius_scale = u
+  end
   def radius= rad
-    raise ArgumentError, "Improper argument - not length. #{rad}" unless rad.kind == :length
+    rad = U(rad) if rad.is_a? String
+    set_radius_scale rad.units
     setmass(rad / (2 * g) * c**2)
-    radius_scale = rad.units
   end
   def radius ; (mass * 2 * g / c**2).convert_to(radius_scale) end
 
-  attr_accessor :area_scale
+  attr_reader :area_scale
+  def set_area_scale u
+    raise ArgumentError, "Improper argument - not area. #{u}" unless U(u).kind == :area
+    @area_scale = u
+  end
   def area= ar
-    raise ArgumentError, "Improper argument - not area. #{ar}" unless ar.kind == :area
-    raise
+    ar = U(ar) if ar.is_a? String
+    mas = Math.sqrt(ar / (16 * pi * g**2) * (c**4) )
+    set_area_scale ar.units
+    setmass mas
   end
   def area ; (4 * pi * radius**2).convert_to(area_scale) end
 
-  attr_accessor :gravity_scale
+  attr_reader :gravity_scale
+  def set_gravity_scale u
+    raise ArgumentError, "Improper argument - not acceleration. #{u}" unless U(u).kind == :acceleration
+    @gravity_scale = u
+  end
   def gravity= grav
-    raise ArgumentError, "Improper argument - not acceleration. #{grav}" unless grav.kind == :acceleration
+    grav = U(grav) if grav.is_a? String
+    set_gravity_scale grav.units
+    setmass -1
     raise
   end
   def gravity ; (1 / mass * c**4 / (4 * g)).convert_to(gravity_scale) end
 
-  attr_accessor :luminosity_scale
+  attr_reader :luminosity_scale
+  def set_luminosity_scale u
+    raise ArgumentError, "Improper argument - not power. #{u}" unless U(u).kind == :power
+    @luminosity_scale = u
+  end
   def luminosity= lum
-    raise ArgumentError, "Improper argument - not power. #{lum}" unless lum.kind == :power
-    raise
+    lum = U(lum) if lum.is_a? String
+    set_luminosity_scale lum.units
+    mas1 = lum / (hbar * c**6) * (15360 * pi * g**2)
+    mas2 = 1 / Math.sqrt(mas1)
+    setmass mas2
   end
   def luminosity ; ((1 / mass**2) * ((hbar * c**6) / (15360 * pi * g**2))) end
 
-  attr_accessor :lifetime_scale
+  attr_reader :lifetime_scale
+  def set_lifetime_scale u
+    raise ArgumentError, "Improper argument - not time. #{u}" unless U(u).kind == :time
+    @lifetime_scale = u
+  end
   def lifetime= lif
-    raise ArgumentError, "Improper argument - not time. #{lif}" unless lif.kind == :time
+    lif = U(lif) if lif.is_a? String
+    set_lifetime_scale lif.units
     raise
   end
   def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))).convert_to(lifetime_scale) end
 
-  attr_accessor :energy_scale
+  attr_reader :energy_scale
+  def set_energy_scale u
+    raise ArgumentError, "Improper argument - not energy. #{u}" unless U(u).kind == :energy
+    @energy_scale = u
+  end
   def energy= energ
-    raise ArgumentError, "Improper argument - not energy. #{energ}" unless energ.kind == :energy
+    energ = U(energ) if energ.is_a? String
+    set_energy_scale energ.units
     setmass(energ.convert_to('J') / c**2)
   end
   def energy ; (mass * c**2).convert_to(energy_scale) end
