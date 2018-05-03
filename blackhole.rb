@@ -89,8 +89,7 @@ class Blackhole
   def gravity= grav
     grav = U(grav) if grav.is_a? String
     set_gravity_scale grav.units
-    setmass -1
-    raise
+    setmass(1 / (grav / c**4 * (4 * g)))
   end
   def gravity ; (1 / mass * c**4 / (4 * g)).convert_to(gravity_scale) end
 
@@ -116,7 +115,9 @@ class Blackhole
   def lifetime= lif
     lif = U(lif) if lif.is_a? String
     set_lifetime_scale lif.units
-    raise
+    mas1 = lif / (5120 * pi * g**2) * (hbar * c**4)
+    mas2 = mas1**Rational(1,3)
+    setmass mas2
   end
   def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))).convert_to(lifetime_scale) end
 
