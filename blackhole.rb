@@ -94,9 +94,13 @@ class Blackhole
   def gravity= grav
     grav = U(grav) if grav.is_a? String
     set_gravity_scale grav.units
+    return setmass(0) if grav <= 0
     setmass(1 / (grav.convert_to(base_gravity_scale) / c**4 * (4 * g)))
   end
-  def gravity ; (1 / mass * c**4 / (4 * g)).convert_to(gravity_scale) end
+  def gravity
+    return U("0 #{base_gravity_scale}") if mass.zero?
+    (1 / mass * c**4 / (4 * g)).convert_to(gravity_scale)
+  end
 
   def base_energy_scale ; 'J' end
   def energy_scale ; @energy_scale ||= base_energy_scale end
@@ -120,9 +124,13 @@ class Blackhole
   def luminosity= lum
     lum = U(lum) if lum.is_a? String
     set_luminosity_scale lum.units
+    return setmass(0) if lum <= 0
     setmass(1 / Math.sqrt(lum.convert_to(base_luminosity_scale) / (hbar * c**6) * (15360 * pi * g**2)))
   end
-  def luminosity ; ((1 / mass**2) * ((hbar * c**6) / (15360 * pi * g**2))).convert_to(luminosity_scale) end
+  def luminosity
+    return U("0 #{base_luminosity_scale}") if mass.zero?
+    ((1 / mass**2) * ((hbar * c**6) / (15360 * pi * g**2))).convert_to(luminosity_scale)
+  end
 
   def base_lifetime_scale ; 's' end
   def lifetime_scale ; @lifetime_scale ||= base_lifetime_scale end
@@ -133,20 +141,33 @@ class Blackhole
   def lifetime= lif
     lif = U(lif) if lif.is_a? String
     set_lifetime_scale lif.units
-    setmass((lif.convert_to(base_lifetime_scale) / 5120 / pi / g**2 * hbar * c**4).base ** R(1,3))
+    mas = if lif < 0
+      0
+    else
+      (lif.convert_to(base_lifetime_scale) / 5120 / pi / g**2 * hbar * c**4).base ** R(1,3)
+    end
+    p [:lif=, lif, lif.base, lif.base.scalar, mas]
+    setmass mas
   end
   def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))).convert_to(lifetime_scale) end
 
-  def entropy= n ; raise end # FIXME
-  def entropy_unitcorrection ; '1 kg*m^2/W*s^3' end
-  def entropy ; (mass**2 * ((4 * pi * g) / (hbar * c / Math.log(10)))) / entropy_unitcorrection end # FIXME Wrong number and units
+  def entropy= ent
+    ent = U(ent) if ent.is_a? String
+    raise ArgumentError, "Entropy is unitless" unless ent.units.empty?
+    setmass(Math.sqrt(ent / (4 * pi * g) * (hbar * c)).scalar)
+  end
+  def entropy ; U((mass**2 * 4 * pi * g / hbar / c).scalar.to_f) end
 
-  def to_s ; "(mass: #{mass}, radius: #{radius}, area: #{area}, gravity: #{gravity}, energy: #{energy}, luminosity: #{luminosity}, lifetime: #{lifetime})" end
+  def to_s ; "(mass: #{mass}, radius: #{radius}, area: #{area}, gravity: #{gravity}, entropy: #{entropy}, energy: #{energy}, luminosity: #{luminosity}, lifetime: #{lifetime})" end
 
   def inspect ; "<Blackhole:0x#{object_id.to_s 16} #{to_s}>" end
 
   def age_by n # days
-    # returns energy released, decrements mass
+    n = U(n) unless n.is_a? Unit
+    raise ArgumentError, "Needs to be time: '#{n}' -> '#{n.kind}'" unless n.kind == :time
+    e = energy
+    self.lifetime = lifetime - n
+    de = e - energy
   end
 
   def initialize mass # kg
