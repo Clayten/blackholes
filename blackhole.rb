@@ -41,116 +41,111 @@ class Blackhole
   def 𝜏 ; tau end
   # FIXME add superscripts ² 
 
-  def base_mass_scale ; 'kg' end
-  def mass_scale ; @mass_scale ||= base_mass_scale end
-  def set_mass_scale u
+  def base_mass_units ; 'kg' end
+  def mass_units ; @mass_units ||= base_mass_units end
+  def set_mass_units u
     raise ArgumentError, "Improper argument - not mass. #{u}" unless U(u).kind == :mass
-    @mass_scale = u
-    @mass = mass.convert_to(mass_scale) if mass
+    @mass_units = u
+    @mass = mass.convert_to(mass_units) if mass
   end
   def mass= mas
     mas = U(mas) if mas.is_a? String
     if mas.is_a?(Unit) && mas.kind != :unitless
-      set_mass_scale mas.units # Only set the units if they were provided
+      set_mass_units mas.units
     else
-      mas = U("#{mas} #{mass_scale}") # Raw numbers are treated as units of the default scale
+      mas = U("#{mas} #{mass_units}")
     end
     @mass = mas
   end
   alias setmass mass=
   def mass ; @mass end
 
-  def base_radius_scale ; 'm' end
-  def radius_scale ; @radius_scale ||= base_radius_scale end
-  def set_radius_scale u
+  def base_radius_units ; 'm' end
+  def radius_units ; @radius_units ||= base_radius_units end
+  def set_radius_units u
     raise ArgumentError, "Improper argument - not length. #{u}" unless U(u).kind == :length
-    @radius_scale = u
+    @radius_units = u
   end
   def radius= rad
     rad = U(rad) if rad.is_a? String
-    set_radius_scale rad.units
-    setmass(rad.convert_to(base_radius_scale) / (2 * g) * c**2)
+    set_radius_units rad.units
+    setmass(rad.convert_to(base_radius_units) / (2 * g) * c**2)
   end
-  def radius ; (mass * 2 * g / c**2).convert_to(radius_scale) end
+  def radius ; (mass * 2 * g / c**2).convert_to(radius_units) end
 
-  def base_area_scale ; 'm^2' end
-  def area_scale ; @area_scale ||= base_area_scale end
-  def set_area_scale u
+  def base_area_units ; 'm^2' end
+  def area_units ; @area_units ||= base_area_units end
+  def set_area_units u
     raise ArgumentError, "Improper argument - not area. #{u}" unless U(u).kind == :area
-    @area_scale = u
+    @area_units = u
   end
   def area= ar
     ar = U(ar) if ar.is_a? String
-    set_area_scale ar.units
-    setmass(Math.sqrt(ar.convert_to(base_area_scale) / (16 * pi * g**2) * (c**4)))
+    set_area_units ar.units
+    setmass(Math.sqrt(ar.convert_to(base_area_units) / (16 * pi * g**2) * (c**4)))
   end
-  def area ; (4 * pi * radius**2).convert_to(area_scale) end
+  def area ; (4 * pi * radius**2).convert_to(area_units) end
 
-  def base_gravity_scale ; 'm/s^2' end
-  def gravity_scale ; @gravity_scale ||= base_gravity_scale end
-  def set_gravity_scale u
+  def base_gravity_units ; 'm/s^2' end
+  def gravity_units ; @gravity_units ||= base_gravity_units end
+  def set_gravity_units u
     raise ArgumentError, "Improper argument - not acceleration. #{u}" unless U(u).kind == :acceleration
-    @gravity_scale = u
+    @gravity_units = u
   end
   def gravity= grav
     grav = U(grav) if grav.is_a? String
-    set_gravity_scale grav.units
+    set_gravity_units grav.units
     return setmass(0) if grav <= 0
-    setmass(1 / (grav.convert_to(base_gravity_scale) / c**4 * (4 * g)))
+    setmass(1 / (grav.convert_to(base_gravity_units) / c**4 * (4 * g)))
   end
   def gravity
-    return U("0 #{base_gravity_scale}") if mass.zero?
-    (1 / mass * c**4 / (4 * g)).convert_to(gravity_scale)
+    return U("0 #{base_gravity_units}") if mass.zero?
+    (1 / mass * c**4 / (4 * g)).convert_to(gravity_units)
   end
 
-  def base_energy_scale ; 'J' end
-  def energy_scale ; @energy_scale ||= base_energy_scale end
-  def set_energy_scale u
+  def base_energy_units ; 'J' end
+  def energy_units ; @energy_units ||= base_energy_units end
+  def set_energy_units u
     raise ArgumentError, "Improper argument - not energy. #{u}" unless U(u).kind == :energy
-    @energy_scale = u
+    @energy_units = u
   end
   def energy= energ
     energ = U(energ) if energ.is_a? String
-    set_energy_scale energ.units
-    setmass(energ.convert_to(base_energy_scale) / c**2)
+    set_energy_units energ.units
+    setmass(energ.convert_to(base_energy_units) / c**2)
   end
-  def energy ; (mass * c**2).convert_to(energy_scale) end
+  def energy ; (mass * c**2).convert_to(energy_units) end
 
-  def base_luminosity_scale ; 'W' end
-  def luminosity_scale ; @luminosity_scale ||= base_luminosity_scale end
-  def set_luminosity_scale u
+  def base_luminosity_units ; 'W' end
+  def luminosity_units ; @luminosity_units ||= base_luminosity_units end
+  def set_luminosity_units u
     raise ArgumentError, "Improper argument - not power. #{u}" unless U(u).kind == :power
-    @luminosity_scale = u
+    @luminosity_units = u
   end
   def luminosity= lum
     lum = U(lum) if lum.is_a? String
-    set_luminosity_scale lum.units
+    set_luminosity_units lum.units
     return setmass(0) if lum <= 0
-    setmass(1 / Math.sqrt(lum.convert_to(base_luminosity_scale) / (hbar * c**6) * (15360 * pi * g**2)))
+    setmass(1 / Math.sqrt(lum.convert_to(base_luminosity_units) / (hbar * c**6) * (15360 * pi * g**2)))
   end
   def luminosity
-    return U("0 #{base_luminosity_scale}") if mass.zero?
-    ((1 / mass**2) * ((hbar * c**6) / (15360 * pi * g**2))).convert_to(luminosity_scale)
+    return U("0 #{base_luminosity_units}") if mass.zero?
+    ((1 / mass**2) * ((hbar * c**6) / (15360 * pi * g**2))).convert_to(luminosity_units)
   end
 
-  def base_lifetime_scale ; 's' end
-  def lifetime_scale ; @lifetime_scale ||= base_lifetime_scale end
-  def set_lifetime_scale u
+  def base_lifetime_units ; 's' end
+  def lifetime_units ; @lifetime_units ||= base_lifetime_units end
+  def set_lifetime_units u
     raise ArgumentError, "Improper argument - not time. #{u}" unless U(u).kind == :time
-    @lifetime_scale = u
+    @lifetime_units = u
   end
   def lifetime= lif
     lif = U(lif) if lif.is_a? String
-    set_lifetime_scale lif.units
-    mas = if lif < 0
-      0
-    else
-      (lif.convert_to(base_lifetime_scale) / 5120 / pi / g**2 * hbar * c**4).base ** R(1,3)
-    end
-    p [:lif=, lif, lif.base, lif.base.scalar, mas]
-    setmass mas
+    set_lifetime_units lif.units
+    return setmass(0) if lif <= 0
+    setmass (lif.convert_to(base_lifetime_units) / 5120 / pi / g**2 * hbar * c**4).base ** R(1,3)
   end
-  def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))).convert_to(lifetime_scale) end
+  def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))).convert_to(lifetime_units) end
 
   def entropy= ent
     ent = U(ent) if ent.is_a? String
