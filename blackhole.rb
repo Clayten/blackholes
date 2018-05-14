@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 # https://github.com/olbrich/ruby-units/blob/master/lib/ruby_units/unit.rb
+# https://github.com/jeffmcfadden/physics/blob/master/lib/physics/fundamental_constants.rb
 
 require 'physics'
 require 'ruby-units'
@@ -158,7 +159,7 @@ class Blackhole
   end
   def entropy ; U((mass**2 * 4 * pi * g / hbar / c).scalar.to_f) end
 
-  def to_s ; "(mass: #{mass}, radius: #{radius}, area: #{area}, gravity: #{gravity}, entropy: #{entropy}, energy: #{energy}, luminosity: #{luminosity}, lifetime: #{lifetime})" end
+  def to_s ; "(Mass: #{mass}, Radius: #{radius}, Area: #{area}, Gravity: #{gravity}, Entropy: #{entropy}, Energy: #{energy}, Luminosity: #{luminosity}, Lifetime: #{lifetime})" end
 
   def inspect ; "<Blackhole:0x#{object_id.to_s 16} #{to_s}>" end
 
