@@ -39,6 +39,7 @@ class Blackhole
   def ℏ ; hbar end
   def 𝜋 ; pi end
   def 𝜏 ; tau end
+  def infinity ; 1/0.0 end # Defined for floats
   # FIXME add superscripts ² 
 
   def base_mass_units ; 'kg' end
@@ -55,6 +56,8 @@ class Blackhole
     else
       mas = U("#{mas} #{mass_units}")
     end
+    raise ArgumentError, "Mass cannot be negative" if mas < 0
+    raise ArgumentError, "Mass cannot be infinite" if mas.scalar == infinity
     @mass = mas
   end
   alias setmass mass=
