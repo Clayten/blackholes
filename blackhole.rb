@@ -23,18 +23,20 @@ class Blackhole
   # https://www.vttoth.com/HAWKING/hrcalc.js
   # solar mass = 2e30kg
 
-  def self.R a,b; Rational a, b end
-  def self.U s  ; Unit.new s end
-  def self.G    ; U("#{Physics::FundamentalConstants.newtonian_constant_of_gravitation} m^3/kg*s^2") end # m^3*kg^-1*s^-2
-  def self.C    ; U("#{Physics::FundamentalConstants.speed_of_light_in_vacuum} m/s") end
-  def self.H    ; U("#{Physics::FundamentalConstants.plank_constant} W*s^2") end # J*s
-  def self.Hbar ; self.H / Math::TAU end # J*s
-  def U x  ; self.class.U x end
-  def g    ; self.class.G end
-  def c    ; self.class.C end
-  def h    ; self.class.H    end
-  def hbar ; self.class.Hbar end
-  def pi  ; Math::PI end
+  def self.U s, u = nil ; Unit.new s, u end
+  def self.R a, b       ; Rational a, b end
+  def self.G      ; U("#{Physics::FundamentalConstants.newtonian_constant_of_gravitation} m^3/kg*s^2") end # m^3*kg^-1*s^-2
+  def self.C      ; U("#{Physics::FundamentalConstants.speed_of_light_in_vacuum} m/s") end
+  def self.H      ; U("#{Physics::FundamentalConstants.plank_constant} W*s^2") end # J*s
+  def self.Hbar   ; self.H / Math::TAU end # J*s
+  def R a, b ; self.class.R a, b end
+  def U x    ; self.class.U x end
+  def g      ; self.class.G end
+  def c      ; self.class.C end
+  def h      ; self.class.H    end
+  def hbar   ; self.class.Hbar end
+  def pi ; Math::PI end
+  def infinity ; 1/0.0 end # Defined for floats
   def ℎ ; h end
   def ℏ ; hbar end
   def 𝜋 ; pi end
