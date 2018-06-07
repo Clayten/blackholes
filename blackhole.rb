@@ -51,12 +51,16 @@ class Blackhole
     @mass_units = u
     @mass = mass.convert_to(mass_units) if mass
   end
-  def mass= mas
+  def mass= mas, base_units = false
     mas = U(mas) if mas.is_a? String
     if mas.is_a?(Unit) && mas.kind != :unitless
       set_mass_units mas.units
     else
-      mas = U("#{mas} #{mass_units}")
+      if base_units
+        mas = U("#{mas} #{base_mass_units}").to(mass_units)
+      else
+        mas = U("#{mas} #{mass_units}")
+      end
     end
     raise ArgumentError, "Mass cannot be negative" if mas < 0
     raise ArgumentError, "Mass cannot be infinite" if mas.scalar == infinity
@@ -74,7 +78,7 @@ class Blackhole
   def radius= rad
     rad = U(rad) if rad.is_a? String
     set_radius_units rad.units
-    setmass(rad.convert_to(base_radius_units) / (2 * g) * c**2)
+    setmass((rad.convert_to(base_radius_units) / (2 * g) * c**2).scalar.to_f, true)
   end
   def radius ; (mass * 2 * g / c**2).convert_to(radius_units) end
 
@@ -87,7 +91,7 @@ class Blackhole
   def area= ar
     ar = U(ar) if ar.is_a? String
     set_area_units ar.units
-    setmass(Math.sqrt(ar.convert_to(base_area_units) / (16 * pi * g**2) * (c**4)))
+    setmass((Math.sqrt(ar.convert_to(base_area_units) / (16 * pi * g**2) * (c**4))).scalar.to_f, true)
   end
   def area ; (4 * pi * radius**2).convert_to(area_units) end
 
@@ -101,7 +105,7 @@ class Blackhole
     grav = U(grav) if grav.is_a? String
     set_gravity_units grav.units
     return setmass(0) if grav <= 0
-    setmass(1 / (grav.convert_to(base_gravity_units) / c**4 * (4 * g)))
+    setmass((1 / (grav.convert_to(base_gravity_units) / c**4 * (4 * g))).scalar.to_f, true)
   end
   def gravity
     return U("0 #{base_gravity_units}") if mass.zero?
@@ -117,7 +121,7 @@ class Blackhole
   def energy= energ
     energ = U(energ) if energ.is_a? String
     set_energy_units energ.units
-    setmass(energ.convert_to(base_energy_units) / c**2)
+    setmass((energ.convert_to(base_energy_units) / c**2).scalar.to_f, true)
   end
   def energy ; (mass * c**2).convert_to(energy_units) end
 
@@ -131,7 +135,7 @@ class Blackhole
     lum = U(lum) if lum.is_a? String
     set_luminosity_units lum.units
     return setmass(0) if lum <= 0
-    setmass(1 / Math.sqrt(lum.convert_to(base_luminosity_units) / (hbar * c**6) * (15360 * pi * g**2)))
+    setmass((1 / Math.sqrt(lum.convert_to(base_luminosity_units) / (hbar * c**6) * (15360 * pi * g**2))).scalar.to_f, true)
   end
   def luminosity
     return U("0 #{base_luminosity_units}") if mass.zero?
@@ -148,7 +152,7 @@ class Blackhole
     lif = U(lif) if lif.is_a? String
     set_lifetime_units lif.units
     return setmass(0) if lif <= 0
-    setmass (lif.convert_to(base_lifetime_units) / 5120 / pi / g**2 * hbar * c**4).base ** R(1,3)
+    setmass(((lif.convert_to(base_lifetime_units) / 5120 / pi / g**2 * hbar * c**4).base.scalar ** R(1,3)).to_f, true)
   end
   def lifetime ; (mass**3 * ((5120 * pi * g**2) / (hbar * c**4))).convert_to(lifetime_units) end
 
