@@ -41,7 +41,7 @@ class Blackhole
   def ℏ ; hbar end
   def 𝜋 ; pi end
   def 𝜏 ; tau end
-  def infinity ; 1/0.0 end # Defined for floats
+  def ∞ ; infinity end
   # FIXME add superscripts ² 
 
   def base_mass_units ; 'kg' end
