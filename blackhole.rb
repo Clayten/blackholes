@@ -111,6 +111,16 @@ class Blackhole
     return U("0 #{base_gravity_units}") if mass.zero?
     (1 / mass * c**4 / (4 * g)).convert_to(gravity_units)
   end
+  def gravity_at_distance dist
+    force = (g * mass / U(dist) ** 2).to(gravity_units)
+  end
+  def distance_at_which_gravity_is grav
+    dist  = Math.sqrt(1 / (U(grav) / (g * mass.to('kg')))).to(radius_units)
+  end
+  def area_at_distance_at_which_gravity_is grav
+    area  = (4 * pi * distance_at_which_gravity_is(grav)**2).to(area_units)
+  end
+
 
   def base_energy_units ; 'J' end
   def energy_units ; @energy_units ||= base_energy_units end
