@@ -42,7 +42,7 @@ class Blackhole
   def 𝜋 ; pi end
   def 𝜏 ; tau end
   def ∞ ; infinity end
-  # FIXME add superscripts ² 
+  # FIXME add superscripts ²
 
   def base_mass_units ; 'kg' end
   def mass_units ; @mass_units ||= base_mass_units end
