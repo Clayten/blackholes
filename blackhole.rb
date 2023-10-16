@@ -175,8 +175,10 @@ class Blackhole
     de = e - energy
   end
 
-  def initialize mass # kg
-    self.mass= mass
+  def initialize value, field = :mass
+    fieldname = "#{field}="
+    raise "Unknown field #{field}" unless methods.include? fieldname
+    self.send(fieldname, value)
   end
 end
 
