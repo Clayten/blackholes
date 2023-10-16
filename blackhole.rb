@@ -47,7 +47,7 @@ class Blackhole
   def base_mass_units ; 'kg' end
   def mass_units ; @mass_units ||= base_mass_units end
   def set_mass_units u
-    raise ArgumentError, "Improper argument - not mass. #{u}" unless U(u).kind == :mass
+    raise ArgumentError, "Improper argument - not mass. Value is #{U(u).kind}" unless U(u).kind == :mass
     @mass_units = u
     @mass = mass.convert_to(mass_units) if mass
   end
@@ -72,7 +72,7 @@ class Blackhole
   def base_radius_units ; 'm' end
   def radius_units ; @radius_units ||= base_radius_units end
   def set_radius_units u
-    raise ArgumentError, "Improper argument - not length. #{u}" unless U(u).kind == :length
+    raise ArgumentError, "Improper argument - not length. Value is #{U(u).kind}" unless U(u).kind == :length
     @radius_units = u
   end
   def radius= rad
@@ -85,7 +85,7 @@ class Blackhole
   def base_area_units ; 'm^2' end
   def area_units ; @area_units ||= base_area_units end
   def set_area_units u
-    raise ArgumentError, "Improper argument - not area. #{u}" unless U(u).kind == :area
+    raise ArgumentError, "Improper argument - not area. Value is #{U(u).kind}" unless U(u).kind == :area
     @area_units = u
   end
   def area= ar
@@ -98,7 +98,7 @@ class Blackhole
   def base_gravity_units ; 'm/s^2' end
   def gravity_units ; @gravity_units ||= base_gravity_units end
   def set_gravity_units u
-    raise ArgumentError, "Improper argument - not acceleration. #{u}" unless U(u).kind == :acceleration
+    raise ArgumentError, "Improper argument - not acceleration. Value is #{U(u).kind}" unless U(u).kind == :acceleration
     @gravity_units = u
   end
   def gravity= grav
@@ -125,7 +125,7 @@ class Blackhole
   def base_energy_units ; 'J' end
   def energy_units ; @energy_units ||= base_energy_units end
   def set_energy_units u
-    raise ArgumentError, "Improper argument - not energy. #{u}" unless U(u).kind == :energy
+    raise ArgumentError, "Improper argument - not energy. Value is #{U(u).kind}" unless U(u).kind == :energy
     @energy_units = u
   end
   def energy= energ
@@ -138,7 +138,7 @@ class Blackhole
   def base_luminosity_units ; 'W' end
   def luminosity_units ; @luminosity_units ||= base_luminosity_units end
   def set_luminosity_units u
-    raise ArgumentError, "Improper argument - not power. #{u}" unless U(u).kind == :power
+    raise ArgumentError, "Improper argument - not power. Value is #{U(u).kind}" unless U(u).kind == :power
     @luminosity_units = u
   end
   def luminosity= lum
@@ -155,7 +155,7 @@ class Blackhole
   def base_lifetime_units ; 's' end
   def lifetime_units ; @lifetime_units ||= base_lifetime_units end
   def set_lifetime_units u
-    raise ArgumentError, "Improper argument - not time. #{u}" unless U(u).kind == :time
+    raise ArgumentError, "Improper argument - not time. Value is #{U(u).kind}" unless U(u).kind == :time
     @lifetime_units = u
   end
   def lifetime= lif
@@ -168,7 +168,7 @@ class Blackhole
 
   def entropy= ent
     ent = U(ent) if ent.is_a? String
-    raise ArgumentError, "Entropy is unitless" unless ent.units.empty?
+    raise ArgumentError, "Improper argument - Entropy is unitless. Value is #{U(u).kind}" unless ent.units.empty?
     setmass(Math.sqrt(ent / (4 * pi * g) * (hbar * c)).scalar)
   end
   def entropy ; U((mass**2 * 4 * pi * g / hbar / c).scalar.to_f) end
