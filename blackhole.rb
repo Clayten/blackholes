@@ -67,7 +67,7 @@ class Blackhole
     @mass = mas
   end
   alias setmass mass=
-  def mass ; @mass end
+  def mass ; @mass&.convert_to(mass_units) end
 
   def base_radius_units ; 'm' end
   def radius_units ; @radius_units ||= base_radius_units end
@@ -166,6 +166,22 @@ class Blackhole
   def to_s ; "(Mass: #{mass}, Radius: #{radius}, Area: #{area}, Gravity: #{gravity}, Entropy: #{entropy}, Energy: #{energy}, Luminosity: #{luminosity}, Lifetime: #{lifetime})" end
 
   def inspect ; "<Blackhole:0x#{object_id.to_s 16} #{to_s}>" end
+
+  def set_plank_units
+    set_mass_units       'mP'
+    set_radius_units     'lP'
+    set_area_units       'lP^2'
+    set_gravity_units    'lP/tP^2'
+    set_energy_units     'EP'
+    set_luminosity_units 'PP'
+    set_lifetime_units   'tP'
+    self
+  end
+
+  def reset_units
+    @mass_units = @radius_units = @area_units = @gravity_units = @energy_units = @luminosity_units = @lifetime_units = nil
+    self
+  end
 
   def age_by n # days
     n = U(n) unless n.is_a? Unit
